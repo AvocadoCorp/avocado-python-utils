@@ -11,8 +11,13 @@ along with some options, and outputs a versioned directory containing the files,
 MD5 hashes, along with a JSON index file to use as a map between the original filename and the resulting
 versioned filename.
 
-When the script is run, you'll end up with an output directory containing renamed files, along a JSON blob
-that looks like this:
+When the script is run, you'll end up with an output directory containing renamed files, along a JSON blob.
+
+### Static directories, before and after
+
+<img src="https://github.com/AvocadoCorp/avocado-python-utils/raw/master/docs/build_static.png" alt="Versioned tree">
+
+### JSON index to map from before to after
 
     {
       "css-out/base_public.css": "//avocado-static.s3.amazonaws.com/css-out/base_public-vfce4345d.css",
