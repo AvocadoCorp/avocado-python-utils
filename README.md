@@ -11,13 +11,25 @@ along with some options, and outputs a versioned directory containing the files,
 MD5 hashes, along with a JSON index file to use as a map between the original filename and the resulting
 versioned filename.
 
-When the script is run, you'll end up with an output directory containing renamed files, along a JSON blob.
+Using this script, you can:
 
-### Static directories, before and after
+1. Serve versioned resource URLs and cache them infinitely.
+
+2. Offload static resources to a static resources server (or S3 bucket) by rewriting
+references on your web frontend to read paths from the JSON index.
+
+This script was heavily inspired by VFL, the mechanism YouTube employs to serve its static resources, which
+is available on <a href="http://code.google.com/p/msolo/source/browse/trunk/vfl/">Google Code</a>.
+
+### Example output
+
+When the script is run, you'll end up with an output directory containing renamed files, along with a JSON blob.
+
+#### Static directories, input and output
 
 <img src="https://github.com/AvocadoCorp/avocado-python-utils/raw/master/docs/build_static.png" alt="Versioned tree">
 
-### JSON index to map from before to after
+#### JSON index from raw to versioned name
 
     {
       "css-out/base_public.css": "//avocado-static.s3.amazonaws.com/css-out/base_public-vfce4345d.css",
@@ -27,14 +39,12 @@ When the script is run, you'll end up with an output directory containing rename
       ...
     }
 
-(Note also that inside CSS and JS files, references to other resources [eg. /static/foo-bar.png] are also updated
-to match the versioned filenames found in the JSON blob.)
+NOTE: inside CSS and JS files, references to other resources [eg. <code>/static/foo-bar.png</code>] are
+also updated to match the versioned filenames found in the JSON blob.
 
-Using this JSON blob, you can offload static resources to a static resources server (or S3 bucket) by rewriting
-references on your web frontend to read paths from the JSON index.
+Also, in this case, <code>//avocado-static.s3.amazonaws.com/</code> is the <code>--outprefix</code> option.
 
-
-To use:
+### How to
 
 1. During development, serve static resources from a directory, eg. "/static/", which specifies the
 <code>Cache-Control: no-cache</code> HTTP header for ease of development.
