@@ -84,3 +84,32 @@ external host to the script, and <code>rsync</code> the static-out directory the
 to offload static resources from your primary web host. (Note that since the files themselves are renamed,
 it is possible to host mutiple versions of your static resources side-by-side, to allow for partial or gradual
 rollouts, rollbacks, etc. -- in which un-deployed frontends still point at an older versioned filename.)
+
+migrate_mysql.py
+----------------
+
+This script simply takes a directory of named <code>.sql</code> files and runs them against the database
+specified by the command-line arguments, and records what has been done in a table in the database itself.
+
+This is very similar to migrations in Rails, but without any Ruby -- just a dead simple way to allow different
+developers to make database changes while working together in a distributed environment.
+
+If multiple new migrations are detected in the migrations directory, they are performed in order.
+
+    ./migrate_mysql.py my_database_name    \
+        --migrations_dir ./migrations/     \
+        --user notroot                     \
+        --password p4ssw0rd
+
+The script in this case will search <code>./migrations/</code> for files ending in <code>.sql</code>, remove the
+file extension (considering what remains the migration's unique identifier), and sort the migration identifiers,
+and attempt to execute them in order.
+
+If a migration fails due to an SQL error, you may need to manually intervene (eg. by deleting a half-created table).
+The migrator, however, will consider the migration to be "run", and will not attempt to re-run it. If you'd like to
+re-run a migration, you can pass the following option:
+
+    # note that the migration name does not end in .sql
+    ./migrate_mysql.py [options] --rerun 20120412_migration_name
+
+... or just delete the migration with that name in the migrations table.
